@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"GoMeet/models"
 	"GoMeet/view"
 	"net/http"
 )
@@ -12,6 +13,7 @@ type UserController struct {
 	HomeView     *view.View
 	LoginView    *view.View
 	RegisterView *view.View
+	service      *models.UserModel
 }
 
 // AddViewTemplates is responsible for getting all
@@ -50,5 +52,12 @@ func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
 //
 // GET /register
 func (uc *UserController) Register(w http.ResponseWriter, r *http.Request) {
+	uc.RegisterView.Render(w, nil)
+}
+
+// Create is responsible for creating a new application user
+//
+// POST /register
+func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	uc.RegisterView.Render(w, nil)
 }
