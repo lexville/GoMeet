@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // UserModel contains the db to be
@@ -39,10 +40,19 @@ type User struct {
 	Hash     string `gorm:"not null"`
 }
 
+const userPwPepper = "tZXMdcNWU5jLj57JOlcE"
+
 // Create is responsible for creating a new
 // user. It returns nil if the user is created
 // and an error if there user isn't created
 func (um *UserModel) Create(user *User) error {
+	paswordByte := []byte(user.Hash + userPwPepper)
+	hashedBytes, err := bcrypt.GenerateFromPassword(
+		paswordByte, bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Hash = string(hashedBytes)
 	return um.db.Create(user).Error
 }
 

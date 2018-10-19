@@ -61,12 +61,24 @@ func (uc *UserController) Register(w http.ResponseWriter, r *http.Request) {
 //
 // POST /register
 func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Fatal("Unable to parse the register form: ", err)
+	}
+	// TODO Handle this more graciously
+	if r.FormValue("password") != r.FormValue("confirm-password") {
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
 	user := models.User{
-		Name:     "ok",
-		Hash:     "ok",
-		Username: "ok",
+		Name:     r.FormValue("name"),
+		Username: r.FormValue("username"),
+		Email:    r.FormValue("email"),
+		Hash:     r.FormValue("password"),
 	}
 	if err := uc.service.Create(&user); err != nil {
-		log.Fatal("Unable to create a user: ", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	return
 }
