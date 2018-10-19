@@ -3,6 +3,7 @@ package controllers
 import (
 	"GoMeet/models"
 	"GoMeet/view"
+	"log"
 	"net/http"
 )
 
@@ -19,7 +20,7 @@ type UserController struct {
 // AddViewTemplates is responsible for getting all
 // the templates that will be used by the user
 // controller
-func AddViewTemplates() *UserController {
+func AddViewTemplates(us *models.UserModel) *UserController {
 	return &UserController{
 		HomeView: view.AddTemplateFiles(
 			"base",
@@ -30,6 +31,7 @@ func AddViewTemplates() *UserController {
 		RegisterView: view.AddTemplateFiles(
 			"base",
 			"templates/user/register.gohtml"),
+		service: us,
 	}
 }
 
@@ -59,5 +61,12 @@ func (uc *UserController) Register(w http.ResponseWriter, r *http.Request) {
 //
 // POST /register
 func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
-	uc.RegisterView.Render(w, nil)
+	user := models.User{
+		Name:     "ok",
+		Hash:     "ok",
+		Username: "ok",
+	}
+	if err := uc.service.Create(&user); err != nil {
+		log.Fatal("Unable to create a user: ", err)
+	}
 }

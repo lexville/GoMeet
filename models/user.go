@@ -9,11 +9,14 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// UserModel contains the db to be
+// used by the model
 type UserModel struct {
 	db *gorm.DB
 }
 
-func Connect() *UserModel {
+// UserService opens up a db connection
+func UserService() *UserModel {
 	mysqlInfo := config.GetMysqlInfo()
 	db, err := gorm.Open("mysql", mysqlInfo)
 	fmt.Println(mysqlInfo)
@@ -26,6 +29,8 @@ func Connect() *UserModel {
 	}
 }
 
+// User contains all the fields associated with the
+// user
 type User struct {
 	gorm.Model
 	Name     string `gorm:"not null"`
@@ -34,15 +39,19 @@ type User struct {
 	Hash     string `gorm:"not null"`
 }
 
+// Create is responsible for creating a new
+// user. It returns nil if the user is created
+// and an error if there user isn't created
 func (um *UserModel) Create(user *User) error {
-	user.Hash = ""
 	return um.db.Create(user).Error
 }
 
+// AutoMigrate migrates a user table
 func (um *UserModel) AutoMigrate() error {
 	return um.db.AutoMigrate(&User{}).Error
 }
 
+// DropTable destroys the user table
 func (um *UserModel) DropTable() *gorm.DB {
 	return um.db.DropTableIfExists(&User{})
 }
