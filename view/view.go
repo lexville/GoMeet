@@ -34,7 +34,12 @@ func AddTemplateFiles(layout string, files ...string) *View {
 
 // Render is responsible for rendering the view with the data needed
 // by the view
-func (v *View) Render(w http.ResponseWriter, data interface{}) {
+func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) {
+	if alert := getAlert(r); alert != nil {
+		data = alert
+		clearAlert(w)
+	}
+
 	if err := v.Template.ExecuteTemplate(w, v.Layout, data); err != nil {
 		log.Fatal("Unable to render the view: ", err)
 	}

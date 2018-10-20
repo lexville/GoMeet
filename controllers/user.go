@@ -40,21 +40,22 @@ func AddViewTemplates(us *models.UserModel) *UserController {
 //
 // GET /
 func (uc *UserController) Get(w http.ResponseWriter, r *http.Request) {
-	uc.HomeView.Render(w, nil)
+	uc.HomeView.Render(w, r, nil)
 }
 
 // Login is responsible for showing the resister view
 //
 // GET /login
 func (uc *UserController) Login(w http.ResponseWriter, r *http.Request) {
-	uc.LoginView.Render(w, nil)
+	uc.LoginView.Render(w, r, nil)
+
 }
 
 // Register is responsible for showing the resister view
 //
 // GET /register
 func (uc *UserController) Register(w http.ResponseWriter, r *http.Request) {
-	uc.RegisterView.Render(w, nil)
+	uc.RegisterView.Render(w, r, nil)
 }
 
 // Create is responsible for creating a new application user
@@ -64,9 +65,12 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		log.Fatal("Unable to parse the register form: ", err)
 	}
-	// TODO Handle this more graciously
 	if r.FormValue("password") != r.FormValue("confirm-password") {
-		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		alert := view.Alert{
+			AlertLevel:   view.AlertError,
+			AlertMessage: "Passwords do not match",
+		}
+		view.RedirectWithAlert(w, r, "/register", http.StatusSeeOther, alert)
 		return
 	}
 	user := models.User{
