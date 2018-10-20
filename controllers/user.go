@@ -83,6 +83,10 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	alert := view.Alert{
+		AlertLevel:   view.AlertSuccess,
+		AlertMessage: "Success. You can now login",
+	}
+	view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
 	return
 }
