@@ -56,6 +56,22 @@ func (um *UserModel) Create(user *User) error {
 	return um.db.Create(user).Error
 }
 
+// Authenticate checks in the db whether the values provided belong
+// to a user in the db
+func (um *UserModel) Authenticate(email, password string) (*User, error) {
+	foundUser, err := um.FindByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	return foundUser, nil
+}
+
+// FindByEmail (TODO implement this)
+func (um *UserModel) FindByEmail(email string) (*User, error) {
+	var user User
+	return &user, nil
+}
+
 // AutoMigrate migrates a user table
 func (um *UserModel) AutoMigrate() error {
 	return um.db.AutoMigrate(&User{}).Error

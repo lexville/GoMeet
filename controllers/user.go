@@ -90,3 +90,40 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
 	return
 }
+
+// Authenticate is used to check whether the username and password provided
+// belong to a user in the db
+func (uc *UserController) Authenticate(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Fatal("Unable to parse the register form: ", err)
+	}
+	// Confirm that the password has been provided
+	if r.FormValue("password") != "" {
+		alert := view.Alert{
+			AlertLevel:   view.AlertError,
+			AlertMessage: "No password provided",
+		}
+		view.RedirectWithAlert(w, r, "/register", http.StatusSeeOther, alert)
+		return
+	}
+	// Confirm that the username has been provided
+	if r.FormValue("email") != "" {
+		alert := view.Alert{
+			AlertLevel:   view.AlertError,
+			AlertMessage: "No email provided",
+		}
+		view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
+		return
+	}
+
+	email := r.FormValue("email")
+	emapasswordil := r.FormValue("password")
+	if err := uc.service.Authenticate(email, password); err != nil {
+		alert := view.Alert{
+			AlertLevel:   view.AlertError,
+			AlertMessage: "No user with that username or password exists",
+		}
+		view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
+		return
+	}
+}
