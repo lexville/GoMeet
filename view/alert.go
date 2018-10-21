@@ -6,9 +6,13 @@ import (
 )
 
 const (
-	AlertError   = "alert-danger"
+	// AlertError is an alert label also serves as a class name
+	AlertError = "alert-danger"
+	// AlertWarning is an alert label also serves as a class name
 	AlertWarning = "alert-warning"
-	AlertInfo    = "alert-info"
+	// AlertInfo is an alert label also serves as a class name
+	AlertInfo = "alert-info"
+	// AlertSuccess is an alert label also serves as a class name
 	AlertSuccess = "alert-success"
 )
 

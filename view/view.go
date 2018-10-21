@@ -35,6 +35,7 @@ func AddTemplateFiles(layout string, files ...string) *View {
 // Render is responsible for rendering the view with the data needed
 // by the view
 func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) {
+	w.Header().Set("Content-Type", "text-html")
 	if alert := getAlert(r); alert != nil {
 		data = alert
 		clearAlert(w)
