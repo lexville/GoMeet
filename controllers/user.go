@@ -116,7 +116,7 @@ func (uc *UserController) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-	_, err := models.AuthenticateUser(email, password)
+	user, err := models.AuthenticateUser(email, password)
 	if err != nil {
 		alert := view.Alert{
 			AlertLevel:   view.AlertError,
@@ -125,5 +125,5 @@ func (uc *UserController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
 		return
 	}
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	view.RedirectWithUserSession(w, r, "/login", http.StatusSeeOther, user.Username)
 }

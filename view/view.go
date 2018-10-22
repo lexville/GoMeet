@@ -1,6 +1,7 @@
 package view
 
 import (
+	"GoMeet/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,6 +13,14 @@ import (
 type View struct {
 	Template *template.Template
 	Layout   string
+}
+
+type Data struct {
+	Alert    *Alert
+	Username string
+	Session  string
+	User     *models.User
+	Yield    interface{}
 }
 
 // AddTemplateFiles takes in all the files
@@ -36,12 +45,20 @@ func AddTemplateFiles(layout string, files ...string) *View {
 // by the view
 func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) {
 	w.Header().Set("Content-Type", "text-html")
+	var renderData Data
 	if alert := getAlert(r); alert != nil {
-		data = alert
+		renderData.Alert = alert
 		clearAlert(w)
 	}
 
-	if err := v.Template.ExecuteTemplate(w, v.Layout, data); err != nil {
+	if session := getSession(r); session != nil {
+		renderData.Username = session.UserName
+		renderData.Session = session.Session
+	}
+
+	renderData.Yield = data
+
+	if err := v.Template.ExecuteTemplate(w, v.Layout, renderData); err != nil {
 		log.Fatal("Unable to render the view: ", err)
 	}
 }
