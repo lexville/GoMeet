@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -31,6 +33,10 @@ func CreateUser(user *User) error {
 	return db.Create(user).Error
 }
 
+var (
+	errPasswordIncorrect = errors.New("Incorrect Password Provided")
+)
+
 // AuthenticateUser checks in the db whether the values provided belong
 // to a user in the db
 func AuthenticateUser(email, password string) (*User, error) {
@@ -38,12 +44,23 @@ func AuthenticateUser(email, password string) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = bcrypt.CompareHashAndPassword([]byte(foundUser.Hash), []byte(password+userPwPepper))
+	if err != nil {
+		switch err {
+		case bcrypt.ErrMismatchedHashAndPassword:
+			return nil, errPasswordIncorrect
+		default:
+			return nil, err
+		}
+	}
+
 	return foundUser, nil
 }
 
 // FindByEmail (TODO implement this)
 func FindByEmail(email string) (*User, error) {
 	var user User
+	db.Where("email = ?", email).First(&user)
 	return &user, nil
 }
 

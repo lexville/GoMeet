@@ -17,6 +17,7 @@ func SetUpRoutes() {
 	r.HandleFunc("/register", userController.Register).Methods("GET")
 	r.HandleFunc("/register", userController.Create).Methods("POST")
 	r.HandleFunc("/login", userController.Login).Methods("GET")
+	r.HandleFunc("/login", userController.Authenticate).Methods("POST")
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("public"))))
 	if err := http.ListenAndServe(":3000", r); err != nil {
 		log.Fatal("Unable to serve: ", err)

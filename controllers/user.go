@@ -96,16 +96,16 @@ func (uc *UserController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Unable to parse the register form: ", err)
 	}
 	// Confirm that the password has been provided
-	if r.FormValue("password") != "" {
+	if r.FormValue("password") == "" {
 		alert := view.Alert{
 			AlertLevel:   view.AlertError,
 			AlertMessage: "No password provided",
 		}
-		view.RedirectWithAlert(w, r, "/register", http.StatusSeeOther, alert)
+		view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
 		return
 	}
 	// Confirm that the username has been provided
-	if r.FormValue("email") != "" {
+	if r.FormValue("email") == "" {
 		alert := view.Alert{
 			AlertLevel:   view.AlertError,
 			AlertMessage: "No email provided",
@@ -114,14 +114,16 @@ func (uc *UserController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// email := r.FormValue("email")
-	// emapasswordil := r.FormValue("password")
-	// if err := uc.service.AuthenticateUser(email, password); err != nil {
-	// 	alert := view.Alert{
-	// 		AlertLevel:   view.AlertError,
-	// 		AlertMessage: "No user with that username or password exists",
-	// 	}
-	// 	view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
-	// 	return
-	// }
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	_, err := models.AuthenticateUser(email, password)
+	if err != nil {
+		alert := view.Alert{
+			AlertLevel:   view.AlertError,
+			AlertMessage: "No user with that username or password exists",
+		}
+		view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
+		return
+	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

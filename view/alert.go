@@ -31,7 +31,7 @@ func RedirectWithAlert(w http.ResponseWriter, r *http.Request, url string, code 
 }
 
 func persistAlert(w http.ResponseWriter, alert Alert) {
-	expiresAt := time.Now().Add(5 * time.Minute)
+	expiresAt := time.Now().Add(5 * time.Second)
 	alertLevel := http.Cookie{
 		Name:     "alert_level",
 		Value:    alert.AlertLevel,
