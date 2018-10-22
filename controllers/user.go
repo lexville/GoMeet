@@ -14,13 +14,12 @@ type UserController struct {
 	HomeView     *view.View
 	LoginView    *view.View
 	RegisterView *view.View
-	service      *models.UserModel
 }
 
 // AddViewTemplates is responsible for getting all
 // the templates that will be used by the user
 // controller
-func AddViewTemplates(us *models.UserModel) *UserController {
+func AddViewTemplates() *UserController {
 	return &UserController{
 		HomeView: view.AddTemplateFiles(
 			"base",
@@ -31,7 +30,6 @@ func AddViewTemplates(us *models.UserModel) *UserController {
 		RegisterView: view.AddTemplateFiles(
 			"base",
 			"templates/user/register.gohtml"),
-		service: us,
 	}
 }
 
@@ -79,7 +77,7 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		Email:    r.FormValue("email"),
 		Hash:     r.FormValue("password"),
 	}
-	if err := uc.service.Create(&user); err != nil {
+	if err := models.CreateUser(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -116,14 +114,14 @@ func (uc *UserController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	email := r.FormValue("email")
-	emapasswordil := r.FormValue("password")
-	if err := uc.service.Authenticate(email, password); err != nil {
-		alert := view.Alert{
-			AlertLevel:   view.AlertError,
-			AlertMessage: "No user with that username or password exists",
-		}
-		view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
-		return
-	}
+	// email := r.FormValue("email")
+	// emapasswordil := r.FormValue("password")
+	// if err := uc.service.AuthenticateUser(email, password); err != nil {
+	// 	alert := view.Alert{
+	// 		AlertLevel:   view.AlertError,
+	// 		AlertMessage: "No user with that username or password exists",
+	// 	}
+	// 	view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
+	// 	return
+	// }
 }

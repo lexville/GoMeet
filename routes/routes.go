@@ -2,7 +2,6 @@ package routes
 
 import (
 	"GoMeet/controllers"
-	"GoMeet/models"
 	"log"
 	"net/http"
 
@@ -12,8 +11,7 @@ import (
 // SetUpRoutes contains all the routes used
 // by the application
 func SetUpRoutes() {
-	us := models.UserService()
-	userController := controllers.AddViewTemplates(us)
+	userController := controllers.AddViewTemplates()
 	r := mux.NewRouter()
 	r.HandleFunc("/", userController.Get).Methods("GET")
 	r.HandleFunc("/register", userController.Register).Methods("GET")
