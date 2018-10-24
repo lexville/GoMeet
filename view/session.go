@@ -20,8 +20,9 @@ func RedirectWithUserSession(w http.ResponseWriter, r *http.Request, url string,
 		log.Fatal("Unable to generate a session id: ", err)
 	}
 	sessionCookie := http.Cookie{
-		Name:  "remember_token",
-		Value: sessionID.String(),
+		Name:     "remember_token",
+		Value:    sessionID.String(),
+		HttpOnly: true,
 	}
 	http.SetCookie(w, &sessionCookie)
 	http.Redirect(w, r, url, http.StatusSeeOther)
