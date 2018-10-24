@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"GoMeet/models"
+	"GoMeet/session"
 	"GoMeet/view"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -116,7 +118,7 @@ func (uc *UserController) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-	_, err := models.AuthenticateUser(email, password)
+	user, err := models.AuthenticateUser(email, password)
 	if err != nil {
 		alert := view.Alert{
 			AlertLevel:   view.AlertError,
@@ -125,5 +127,7 @@ func (uc *UserController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		view.RedirectWithAlert(w, r, "/login", http.StatusSeeOther, alert)
 		return
 	}
-	view.RedirectWithUserSession(w, r, "/", http.StatusSeeOther)
+	fmt.Println(user)
+	session.SetUserSession(w, r, user.Username)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
