@@ -16,11 +16,10 @@ type View struct {
 }
 
 type Data struct {
-	Alert    *Alert
-	Username string
-	Session  string
-	User     *models.User
-	Yield    interface{}
+	Alert   *Alert
+	Session string
+	User    *models.User
+	Yield   interface{}
 }
 
 // AddTemplateFiles takes in all the files
@@ -52,8 +51,7 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 	}
 
 	if session := getSession(r); session != nil {
-		renderData.Username = session.UserName
-		renderData.Session = session.Session
+		renderData.Session = session.RememberToken
 	}
 
 	renderData.Yield = data
