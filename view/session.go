@@ -7,8 +7,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// UserCookie contains both the session as well
-// as the username
+// UserCookie contains a remember token
 type UserCookie struct {
 	RememberToken string
 }
